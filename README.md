@@ -4,7 +4,7 @@ An interactive PowerShell wizard for administering and configuring Microsoft 365
 
 ## Overview
 
-This tool provides a **rich command-line wizard experience** that guides administrators through:
+This tool provides a command-line wizard experience that guides administrators through:
 
 - ✅ Verifying prerequisites and permissions
 - ✅ Installing required PowerShell modules
@@ -13,7 +13,7 @@ This tool provides a **rich command-line wizard experience** that guides adminis
 - ✅ Enabling/Disabling Copilot features per user or tenant
 - ✅ Configuring data access and compliance policies
 - ✅ Generating audit and reporting queries
-- ✅ Creating bulk user assignments
+- ✅ Creating bulk user assignments (not included in this repository)
 
 ## Quick Start
 
@@ -34,35 +34,37 @@ cd copilot-configure-me-quick
 .\Start-CopilotConfigWizard.ps1
 ```
 
+Note: The wizard uses simple numeric menus (Read-Host) for navigation rather than arrow-key driven interfaces.
+
 ## Features
 
-### 1. **Interactive Menu System**
-Navigate through options using arrow keys and enter selections with a beautiful colored menu interface.
+### 1. Interactive Menu System
+Navigate through options using numeric selections (enter the number for the menu item and press Enter).
 
-### 2. **Prerequisites Check**
+### 2. Prerequisites Check
 - Validates PowerShell version
 - Checks admin elevation status
 - Verifies module installation requirements
 
-### 3. **Tenant Configuration**
+### 3. Tenant Configuration
 - Connect to your M365 tenant
 - Display organization details
 - List available Copilot licenses
 
-### 4. **User Management**
-- Assign Copilot licenses to individual users
-- Bulk assign licenses via CSV import
+### 4. User Management
+- Assign Copilot licenses to individual users (functions not bundled in this repo)
+- Bulk assign licenses via CSV import (not included here)
 - Check user license status
 - Remove Copilot access
 
-### 5. **Compliance & Security**
+### 5. Compliance & Security
 - Configure data access policies
 - Review audit logging settings
 - Set Conditional Access rules
 - Configure DLP policies for AI
 
-### 6. **Reports & Monitoring**
-- Generate Copilot adoption reports
+### 6. Reports & Monitoring
+- Generate Copilot adoption and readiness reports
 - View usage statistics
 - Export license status to CSV
 - List users by license type
@@ -72,77 +74,93 @@ Navigate through options using arrow keys and enter selections with a beautiful 
 ```
 copilot-configure-me-quick/
 ├── README.md
-├── Start-CopilotConfigWizard.ps1         # Main entry point
+├── Start-CopilotConfigWizard.ps1         # Main entry point (v2.0.0)
 ├── modules/
-│   ├── CopilotCore.psm1                  # Core Copilot functions
-│   ├── CopilotLicensing.psm1             # Licensing operations
-│   ├── CopilotCompliance.psm1            # Compliance & security
-│   ├── CopilotReporting.psm1             # Reports & monitoring
-│   └── CopilotUI.psm1                    # UI components
-├── functions/
-│   ├── Connect-CopilotTenant.ps1
-│   ├── Get-CopilotLicenseStatus.ps1
-│   ├── Set-CopilotUserLicense.ps1
-│   ├── Get-CopilotAuditLogs.ps1
-│   └── Export-CopilotReport.ps1
-├── templates/
-│   ├── bulk-import-template.csv
-│   └── compliance-policy-template.json
-└── logs/
-    └── .gitkeep                          # Log directory
+│   ├── CopilotTenantOptimization.psm1    # Tenant checks & recommended settings
+│   └── CopilotVivaInsights.psm1          # Viva Insights & org data functions
+└── logs/                                 # Created at runtime by the script
 ```
+
+Notes:
+- The repository includes the main wizard and the modules listed above. Other directories and example scripts referenced in earlier docs (e.g., `functions/`, `templates/`, `docs/`) are not included in this repository and have been removed from examples below to avoid confusion.
+
+## Implemented Cmdlets / Functions (examples)
+
+The modules included in this repository export the following example functions you can call directly (after importing the module or running the wizard which auto-loads modules from `./modules`):
+
+- Get-CopilotWebSearchStatus
+- Get-CopilotCoreAgentsStatus
+- Get-CopilotDataSecurityStatus
+- Get-CopilotLicensingStatus
+- Get-RecommendedTenantSettingsReport
+
+- Get-VivaInsightsStatus
+- Get-VivaInsightsAdminRoles
+- Get-OrganizationalDataStatus
+- Get-CopilotBrandKitStatus
+- Enable-OrganizationalData
+- Assign-VivaInsightsRole
+- Get-VivaInsightsHealthReport
 
 ## Configuration Examples
 
-### Example: Assign Copilot License to a User
+### Example: Check Licensing Status
 
 ```powershell
-Set-CopilotUserLicense -UserPrincipalName "user@company.com" -Action Enable
+# From the module (or after running the wizard which imports modules)
+Get-CopilotLicensingStatus
 ```
 
-### Example: Bulk Import User Licenses
+### Example: Generate Recommended Tenant Settings Report
 
 ```powershell
-Import-CopilotBulkLicenses -CsvPath ".\bulk-import.csv"
+# Generates CLI output and can export to CSV when supported by the function
+Get-RecommendedTenantSettingsReport -OutputPath ".\copilot-tenant-settings.csv"
 ```
 
-### Example: Generate Adoption Report
+### Example: Generate Viva Insights Health Report
 
 ```powershell
-Get-CopilotAdoptionReport -OutputPath ".\Reports\" -Days 30
+Get-VivaInsightsHealthReport -OutputPath ".\viva-insights-report.csv"
 ```
 
 ## Documentation
 
-- **[ADMIN_GUIDE.md](./docs/ADMIN_GUIDE.md)** - Comprehensive administration guide
-- **[POWERSHELL_REFERENCE.md](./docs/POWERSHELL_REFERENCE.md)** - PowerShell cmdlet reference
-- **[TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md)** - Common issues and solutions
-- **[API_REFERENCE.md](./docs/API_REFERENCE.md)** - Microsoft Graph API reference
+The repository does not include a docs/ folder in this release. Future releases will add expanded ADMIN_GUIDE and reference docs. For now, use the embedded function help and script comments.
 
 ## Requirements
 
 ### PowerShell Modules
 
-- `Microsoft.Graph` - Core Microsoft Graph SDK
-- `Microsoft.Graph.Authentication` - Authentication module
-- `Microsoft.Graph.Users.Functions` - User management
-- `ExchangeOnlineManagement` - Exchange Online operations (optional)
-- `PnP.PowerShell` - SharePoint/OneDrive operations (optional)
+Install the Microsoft Graph PowerShell SDK and other optional modules used by the scripts:
+
+```powershell
+Install-Module -Name Microsoft.Graph -Scope CurrentUser -Force
+# Optional (if you need Exchange or SharePoint operations):
+Install-Module -Name ExchangeOnlineManagement -Scope CurrentUser -Force
+Install-Module -Name PnP.PowerShell -Scope CurrentUser -Force
+```
+
+Note: The previously referenced module `Microsoft.Graph.Users.Functions` was incorrect and has been removed — the scripts expect the Microsoft.Graph SDK and use Get-MgContext / Invoke-MgGraphRequest / Get-MgSubscribedSku etc.
 
 ### Permissions Required
 
-- `User.Read.All`
-- `Directory.Read.All`
-- `Organization.Read.All`
-- `Reports.Read.All`
-- `AuditLog.Read.All`
-- `AppRoleAssignment.ReadWrite.All`
+The Graph calls used by the modules require appropriate delegated or application permissions. Examples used in the code may require:
+
+- User.Read.All
+- Directory.Read.All
+- Organization.Read.All
+- Reports.Read.All
+- AuditLog.Read.All
+- AppRoleAssignment.ReadWrite.All
+
+Always grant least-privilege and test in non-production.
 
 ## Support & Troubleshooting
 
 If you encounter issues:
 
-1. Check **[TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md)**
+1. Use the function help and script comments inside the modules
 2. Review PowerShell execution policy: `Get-ExecutionPolicy`
 3. Validate Graph connection: `Get-MgContext`
 4. Check module versions: `Get-Module Microsoft.Graph -ListAvailable`
@@ -159,7 +177,7 @@ Contributions are welcome! Please:
 
 ## License
 
-This project is licensed under the MIT License - see LICENSE.md for details.
+This project is licensed under the MIT License - see LICENSE for details.
 
 ## Disclaimer
 
@@ -173,11 +191,11 @@ This tool manages enterprise-level configurations. Always:
 
 ## Resources
 
-- [Microsoft 365 Copilot Admin Overview](https://learn.microsoft.com/en-us/microsoft-365-copilot/manage/admin-overview)
+- [Microsoft 365 Copilot Admin Overview](https://learn.microsoft.com/en-us/microsoft-365/copilot/manage/admin-overview)
 - [Microsoft Graph PowerShell](https://learn.microsoft.com/en-us/powershell/microsoftgraph/overview)
 - [Microsoft 365 Copilot Licensing](https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/licensing)
 
 ---
 
 **Last Updated:** July 2024  
-**Version:** 1.0.0
+**Version:** 2.0.0
